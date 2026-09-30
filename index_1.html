@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Serviços</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Instrument+Serif&family=Raleway:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --preto: #101010;
+    --branco: #FFFFFF;
+    --vinho: #670d15;
+    --cinza: #6b6b6b;
+    --linha: #e4e4e4;
+
+    /* Semelhantes disponíveis no Google Fonts:
+       Instrument Serif no lugar de Times New Roman MT Condensed,
+       Caveat no lugar de Handsome */
+    --f-titulo: 'Instrument Serif', 'Times New Roman', Times, serif;
+    --f-texto: 'Raleway', 'Helvetica Neue', Arial, sans-serif;
+    --f-destaque: 'Caveat', cursive;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--f-texto);
+    font-variant-numeric: lining-nums;
+    background: var(--branco);
+    color: var(--preto);
+    font-size: 16px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+  header {
+    padding: 3.5rem 0 2rem;
+    border-bottom: 1px solid var(--preto);
+  }
+  .kicker {
+    font-family: var(--f-destaque);
+    font-size: 26px;
+    line-height: 1;
+    color: var(--vinho);
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-family: var(--f-titulo);
+    font-weight: 400;
+    font-size: clamp(40px, 9vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+  }
+  header p { font-size: 15px; color: var(--cinza); max-width: 500px; }
+
+  main { padding: 2rem 0 4rem; }
+
+  .progress-label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-bottom: 0.5rem;
+  }
+  .progress { height: 2px; background: var(--linha); margin-bottom: 2.5rem; }
+  .progress-bar { height: 100%; width: 0; background: var(--vinho); transition: width 0.25s; }
+
+  .q-title {
+    font-family: var(--f-titulo);
+    font-weight: 400;
+    font-size: clamp(28px, 6vw, 38px);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  .q-hint { font-size: 14px; color: var(--cinza); margin-bottom: 1.5rem; }
+  .q-space { height: 1.5rem; }
+
+  .options { border-top: 1px solid var(--linha); }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--linha);
+    cursor: pointer;
+  }
+  .option input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    margin-top: 3px;
+    flex-shrink: 0;
+    border: 1px solid var(--preto);
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+  }
+  .option input[type="checkbox"] { border-radius: 2px; }
+  .option input:checked { border-color: var(--vinho); background: var(--vinho); box-shadow: inset 0 0 0 3px var(--branco); }
+  .option .opt-text { font-size: 16px; line-height: 1.45; }
+  .option .opt-text small { display: block; font-size: 14px; color: var(--cinza); margin-top: 3px; }
+  .option:hover .opt-text, .option:has(input:checked) .opt-text { color: var(--vinho); }
+
+  .field { margin-bottom: 1.5rem; }
+  .field label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .field label span { font-weight: 400; color: var(--cinza); }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 8px 0;
+    font: inherit;
+    border: none;
+    border-bottom: 1px solid var(--preto);
+    background: transparent;
+    color: var(--preto);
+    outline: none;
+    border-radius: 0;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus, textarea:focus { border-bottom-color: var(--vinho); }
+  input::placeholder, textarea::placeholder { color: #a8a8a8; }
+  textarea { resize: vertical; min-height: 72px; }
+
+  .error { font-size: 14px; color: var(--vinho); margin-top: 1rem; min-height: 1.4em; }
+
+  .nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 1.5rem; }
+
+  .btn {
+    font-family: var(--f-texto);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px 26px;
+    border: 1px solid var(--preto);
+    background: var(--preto);
+    color: var(--branco);
+    cursor: pointer;
+    border-radius: 0;
+  }
+  .btn:hover { background: var(--vinho); border-color: var(--vinho); }
+  .btn.link {
+    background: none;
+    border: none;
+    color: var(--preto);
+    padding: 14px 0;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .btn.link:hover { color: var(--vinho); }
+  .btn.cta { width: 100%; background: var(--vinho); border-color: var(--vinho); padding: 18px; }
+  .btn.cta:hover { background: var(--preto); border-color: var(--preto); }
+  .btn[hidden] { display: none; }
+
+  /* Resultado */
+  .r-kicker {
+    font-family: var(--f-destaque);
+    font-size: 28px;
+    line-height: 1.1;
+    color: var(--vinho);
+  }
+  .r-name {
+    font-family: var(--f-titulo);
+    font-weight: 400;
+    font-size: clamp(44px, 11vw, 72px);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin: 0.35rem 0 1.25rem;
+  }
+  .r-lead { font-size: 17px; margin-bottom: 2rem; }
+
+  .r-why {
+    border-left: 2px solid var(--vinho);
+    padding: 2px 0 2px 18px;
+    margin-bottom: 2.5rem;
+  }
+  .r-why .label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cinza);
+    margin-bottom: 4px;
+  }
+  .r-why p {
+    font-family: var(--f-destaque);
+    font-size: 24px;
+    line-height: 1.3;
+    color: var(--vinho);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--preto);
+    border-bottom: 1px solid var(--preto);
+    margin-bottom: 2.5rem;
+  }
+  .fact { padding: 14px 12px 14px 0; }
+  .fact + .fact { padding-left: 12px; border-left: 1px solid var(--linha); }
+  .fact .k { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cinza); margin-bottom: 4px; }
+  .fact .val { font-size: 15px; font-weight: 500; line-height: 1.35; }
+  @media (max-width: 520px) {
+    .facts { grid-template-columns: 1fr; }
+    .fact, .fact + .fact { padding: 12px 0; border-left: none; }
+    .fact + .fact { border-top: 1px solid var(--linha); }
+  }
+
+  .r-section { margin-bottom: 2.5rem; }
+  .r-section h3 {
+    font-family: var(--f-titulo);
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .r-section p { font-size: 16px; }
+  .r-section p + p { margin-top: 0.75rem; }
+
+  .etapas { list-style: none; counter-reset: etapa; }
+  .etapas li {
+    counter-increment: etapa;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    padding: 14px 0;
+    border-top: 1px solid var(--linha);
+  }
+  .etapas li:last-child { border-bottom: 1px solid var(--linha); }
+  .etapas li::before {
+    content: counter(etapa, decimal-leading-zero);
+    font-family: var(--f-titulo);
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--vinho);
+  }
+  .etapas strong { display: block; font-weight: 600; }
+  .etapas span { font-size: 15px; color: var(--cinza); }
+
+  .para-quem { list-style: none; }
+  .para-quem li { position: relative; padding-left: 20px; margin-bottom: 8px; }
+  .para-quem li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0.7em;
+    width: 8px; height: 1px;
+    background: var(--vinho);
+  }
+
+  .importante {
+    font-family: var(--f-destaque);
+    font-size: 22px;
+    line-height: 1.35;
+    color: var(--vinho);
+    margin-bottom: 2.5rem;
+  }
+
+  .alt { font-size: 14px; color: var(--cinza); margin-top: 1.75rem; }
+  .alt button {
+    background: none; border: none; font: inherit;
+    color: var(--preto); text-decoration: underline; text-underline-offset: 3px;
+    cursor: pointer; padding: 0;
+  }
+  .alt button:hover { color: var(--vinho); }
+  .alt p + p { margin-top: 6px; }
+
+  footer { border-top: 1px solid var(--linha); padding: 1.5rem 0 2.5rem; font-size: 12px; color: var(--cinza); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="kicker">diagnóstico</div>
+    <h1>Qual serviço faz sentido para você?</h1>
+    <p>Responda algumas perguntas. No final você vê o serviço indicado, como funciona, as etapas, a duração e o investimento.</p>
+  </header>
+
+  <main>
+    <div class="progress-label" id="progressLabel"></div>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <div id="quiz"></div>
+    <div id="result"></div>
+  </main>
+
+  <footer>Nenhuma resposta é salva nesta página. Os dados só são enviados se você clicar no botão do WhatsApp.</footer>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — edite aqui
+   ===================================================================== */
+
+// Número de WhatsApp com DDI + DDD, só números
+const WHATSAPP_DESTINO = '5511937311438';
+
+const SERVICOS = {
+  direcao: {
+    nome: 'Direção de Conteúdo',
+    lead: 'Para quem quer ter uma profissional responsável por pensar e direcionar estrategicamente os conteúdos de uma rede social, mas prefere continuar produzindo os próprios conteúdos.',
+    porque: 'Você quer tirar das suas mãos a responsabilidade de decidir constantemente o que produzir, sem terceirizar sua produção.',
+    duracao: 'Mensal, com contratação mínima de 3 meses',
+    valor: 'R$1.500/mês',
+    pagamento: 'Pix ou cartão',
+    comoFunciona: [
+      'Eu assumo a direção estratégica dos conteúdos de uma rede social: acompanho sua comunicação, analiso o que está sendo produzido e os resultados, penso nos próximos direcionamentos e separo as ideias de conteúdos que fazem sentido para você produzir.',
+      'Você fica responsável pela produção em si: escrita, gravação, design, edição e publicação. E, conforme você produz, reviso os conteúdos que você disponibilizar para garantir que estejam alinhados ao direcionamento que construímos.'
+    ],
+    etapas: [
+      { titulo: 'Análise e direcionamento', desc: 'Acompanho sua comunicação, seus objetivos, o momento do negócio e o que está acontecendo na rede social.' },
+      { titulo: 'Planejamento dos conteúdos', desc: 'Seleciono e organizo as ideias, assuntos e formatos que fazem sentido serem trabalhados.' },
+      { titulo: 'Produção pela cliente', desc: 'Você transforma os direcionamentos em conteúdos, ficando responsável pela escrita e pela produção.' },
+      { titulo: 'Revisão e acompanhamento', desc: 'Reviso os conteúdos disponibilizados, acompanho o que está sendo publicado e faço novos direcionamentos e ajustes conforme necessário.' }
+    ],
+    paraQuem: [
+      'Quem quer ter alguém pensando estrategicamente seus conteúdos de forma contínua',
+      'Quem não quer mais decidir sozinha o que produzir a cada semana ou mês',
+      'Quem consegue produzir os próprios conteúdos, mas quer ter uma direção por trás deles',
+      'Quem quer um acompanhamento mais próximo da comunicação sem contratar uma gestão completa com copy, design e edição'
+    ]
+  },
+
+  mentoria: {
+    nome: 'Mentoria de Comunicação',
+    lead: 'Para quem quer continuar desenvolvendo a própria comunicação com meu acompanhamento, trazendo as dificuldades e necessidades que aparecem enquanto coloca tudo em prática.',
+    porque: 'Você quer aprender, aplicar e ter meu acompanhamento para evoluir sua comunicação ao longo dos meses.',
+    duracao: 'Mensal, dentro de um acompanhamento de 3 meses',
+    valor: 'R$800/mês',
+    pagamento: 'Pix ou cartão',
+    comoFunciona: [
+      'Durante no mínimo 3 meses, acompanho sua comunicação e te ajudo a decidir os próximos passos conforme você vai produzindo e novas necessidades vão surgindo.',
+      'Você tem 2 encontros por mês, direcionamentos para aplicação, orientação nos conteúdos que estiver produzindo e suporte durante o processo.'
+    ],
+    etapas: [
+      { titulo: 'Encontros de acompanhamento', desc: 'Olhamos para o que está acontecendo naquele momento, suas dificuldades e o que precisa ser priorizado.' },
+      { titulo: 'Aplicação e orientação', desc: 'Você aplica os direcionamentos e pode trazer ideias, roteiros, copies e dúvidas para receber minha orientação.' },
+      { titulo: 'Próximos passos', desc: 'Conforme você evolui, trabalhamos novas necessidades e dificuldades que aparecem na sua comunicação.' }
+    ],
+    paraQuem: [
+      'Quem quer desenvolver a própria comunicação com acompanhamento próximo',
+      'Quem quer aprender o raciocínio por trás dos ajustes, e não só receber o que fazer',
+      'Quem sente que novas dificuldades aparecem conforme começa a produzir e aplicar'
+    ]
+  },
+
+  consultoria: {
+    nome: 'Consultoria de Conteúdo',
+    lead: 'Para quem quer entender o que faz sentido produzir e ter uma estratégia de conteúdo personalizada, alinhada aos seus objetivos e à sua rotina.',
+    porque: 'Você quer organizar sua comunicação e aprender a aplicar uma estratégia sem depender de alguém produzindo os conteúdos por você.',
+    duracao: '30 dias',
+    valor: 'R$890',
+    pagamento: 'Pix ou cartão',
+    comoFunciona: [
+      'A partir do seu posicionamento e dos seus objetivos, analiso sua comunicação e construo um planejamento personalizado com os direcionamentos, materiais e ferramentas necessários para você aplicar sua estratégia.',
+      'Durante 30 dias, você também tem meu suporte e, quando sentir necessidade, pode enviar conteúdos para revisão.'
+    ],
+    etapas: [
+      { titulo: 'Diagnóstico e encontro estratégico', desc: 'Analiso sua comunicação atual e nos reunimos para aprofundar o que precisa ser trabalhado.' },
+      { titulo: 'Planejamento personalizado', desc: 'Você recebe sua estratégia, direcionamentos e materiais de apoio para aplicar na rotina.' },
+      { titulo: 'Aplicação e suporte', desc: 'Durante 30 dias, você aplica o planejamento e continua tendo meu suporte e revisões quando precisar.' }
+    ],
+    paraQuem: [
+      'Marcas pessoais que já têm seu posicionamento definido',
+      'Quem não sabe exatamente o que faz sentido produzir ou como organizar sua comunicação',
+      'Quem quer aprender a aplicar a própria estratégia e produzir os próprios conteúdos',
+      'Quem quer um caminho estruturado que respeite seus objetivos e sua rotina'
+    ]
+  },
+
+  orientacao: {
+    nome: 'Orientação para Social Media',
+    lead: 'Para social medias que já atendem clientes e querem ter meu olhar para as demandas de conteúdo e comunicação que aparecem no trabalho.',
+    porque: 'Você é social media e busca ajuda para pensar estratégias, conteúdos e situações específicas dos seus clientes ou da sua própria comunicação.',
+    duracao: 'Mensal',
+    valor: 'R$500/mês',
+    pagamento: 'Pix ou cartão',
+    comoFunciona: [
+      'Você tem 2 encontros por mês, de 1h a 1h30, e pode trazer o que estiver precisando naquele momento.',
+      'Não existe uma sequência fixa de encontros: a Orientação acompanha as demandas que aparecem no seu trabalho.'
+    ],
+    etapas: [
+      { titulo: 'Você traz a demanda', desc: 'Pode ser uma estratégia de cliente, um conteúdo, uma dificuldade, uma decisão de comunicação ou uma questão da sua própria produção.' },
+      { titulo: 'Pensamos juntas', desc: 'Analisamos a situação e construímos os direcionamentos que façam sentido para você aplicar.' }
+    ],
+    paraQuem: [
+      'Social medias que já atendem clientes',
+      'Quem lida com diferentes clientes, nichos e demandas e quer ter com quem pensar estrategicamente',
+      'Quem quer orientação sobre conteúdo e comunicação sem entrar em uma formação ou mentoria com processo fixo'
+    ],
+    importante: 'Importante: a Orientação é voltada para conteúdo e comunicação. Questões de vendas, gestão, processos e organização do negócio não fazem parte desse serviço.'
+  }
+};
+
+// Resultado para quem nenhum serviço atende no momento
+const SEM_SERVICO = {
+  titulo: 'Por enquanto, nenhum serviço',
+  texto: [
+    'Hoje, nenhum dos meus serviços é indicado para o seu momento.',
+    'A Orientação é para social medias que já atendem clientes, porque ela parte das demandas que aparecem no trabalho com eles.',
+    'Quando você começar a atender clientes, refaça o diagnóstico.'
+  ]
+};
+
+/* =====================================================================
+   PERGUNTAS
+   Cada opção soma pontos (pts) para os serviços.
+   O serviço com mais pontos no final é o indicado.
+   Opções sem pts servem só de contexto e vão na mensagem do WhatsApp.
+   ===================================================================== */
+
+const PERGUNTAS = [
+  {
+    id: 'perfil',
+    titulo: 'Qual frase descreve você?',
+    opcoes: [
+      { v: 'Sou social media', pts: {} },
+      { v: 'Tenho uma marca pessoal ou um negócio e quero cuidar da minha comunicação', pts: {} }
+    ]
+  },
+
+  // ---- Social media ----
+  {
+    id: 'sm_clientes', se: r => r.perfil === 0,
+    titulo: 'Quantos clientes você atende hoje?',
+    opcoes: [
+      { v: 'Ainda nenhum' },
+      { v: 'De 1 a 3', pts: { orientacao: 100 } },
+      { v: 'De 4 a 6', pts: { orientacao: 100 } },
+      { v: 'Mais de 6', pts: { orientacao: 100 } }
+    ]
+  },
+  {
+    id: 'sm_objetivo', se: r => r.perfil === 0 && r.sm_clientes === 0,
+    titulo: 'Qual é o seu objetivo agora?',
+    opcoes: [
+      { v: 'Produzir conteúdo para o meu próprio perfil', pts: { consultoria: 100 } },
+      { v: 'Entender mais de estratégia e ter suporte para montar uma', pts: { nenhum: 100 } }
+    ]
+  },
+  {
+    id: 'sm_demanda', se: r => r.perfil === 0 && r.sm_clientes > 0, multi: true,
+    titulo: 'Sobre o que você quer orientação?',
+    hint: 'Pode marcar mais de uma.',
+    opcoes: [
+      { v: 'Estratégia de conteúdo dos clientes' },
+      { v: 'Conteúdos específicos dos clientes' },
+      { v: 'Decisões e situações de comunicação com clientes' },
+      { v: 'A minha própria comunicação como social media' }
+    ]
+  },
+
+  // ---- Marca ----
+  {
+    id: 'rede', se: r => r.perfil === 1,
+    titulo: 'Em qual rede social está o seu foco hoje?',
+    opcoes: [
+      { v: 'Instagram' }, { v: 'TikTok' }, { v: 'LinkedIn' }, { v: 'YouTube' }, { v: 'Outra' }
+    ]
+  },
+  {
+    id: 'desejo', se: r => r.perfil === 1,
+    titulo: 'Qual frase mais combina com o que você procura?',
+    opcoes: [
+      { v: 'Quero uma estratégia pronta e aprender a aplicar por conta própria', hint: 'Recebo o planejamento e sigo produzindo sozinha', pts: { consultoria: 4 } },
+      { v: 'Quero alguém ao meu lado enquanto desenvolvo minha comunicação', hint: 'Trago minhas demandas e pensamos juntas', pts: { mentoria: 4 } },
+      { v: 'Quero que alguém pense e organize o que eu vou produzir', hint: 'Eu fico só com a produção', pts: { direcao: 4 } }
+    ]
+  },
+  {
+    id: 'decidir', se: r => r.perfil === 1,
+    titulo: 'Sobre decidir o que produzir a cada semana ou mês:',
+    opcoes: [
+      { v: 'Quero aprender a decidir sozinha', pts: { consultoria: 2, mentoria: 1 } },
+      { v: 'Quero decidir junto com alguém', pts: { mentoria: 2 } },
+      { v: 'Não quero mais ter essa responsabilidade', pts: { direcao: 3 } }
+    ]
+  },
+  {
+    id: 'periodo', se: r => r.perfil === 1,
+    titulo: 'Por quanto tempo você quer ter acompanhamento?',
+    opcoes: [
+      { v: 'Cerca de 30 dias', hint: 'Para organizar e depois seguir sozinha', pts: { consultoria: 3 } },
+      { v: 'Alguns meses', hint: 'Enquanto desenvolvo minha comunicação', pts: { mentoria: 2, direcao: 1 } },
+      { v: 'De forma contínua', hint: 'Todos os meses, sem prazo para terminar', pts: { direcao: 2, mentoria: 1 } }
+    ]
+  },
+  {
+    id: 'posicionamento', se: r => r.perfil === 1,
+    titulo: 'Seu posicionamento está definido?',
+    hint: 'O que você faz, para quem e como quer ser percebida.',
+    opcoes: [
+      { v: 'Sim, está claro', pts: { consultoria: 1 } },
+      { v: 'Em parte', pts: { mentoria: 1 } },
+      { v: 'Não', pts: { mentoria: 2 } }
+    ]
+  },
+  {
+    id: 'momento', se: r => r.perfil === 1,
+    titulo: 'Qual é a situação atual da sua rede social?',
+    opcoes: [
+      { v: 'Ainda não posto ou vou começar do zero' },
+      { v: 'Posto, mas sem constância' },
+      { v: 'Posto com constância, mas não tenho o resultado que quero' },
+      { v: 'Tenho resultado e quero crescer' }
+    ]
+  },
+
+  // ---- Contato (todos) ----
+  { id: 'contato', tipo: 'contato', se: r => r.sm_objetivo !== 1, titulo: 'Para finalizar, seus dados', hint: 'Usados apenas na mensagem que você vai me enviar pelo WhatsApp.' }
+];
+
+/* ===================================================================== */
+
+const ORDEM_DESEMPATE = ['nenhum', 'orientacao', 'direcao', 'mentoria', 'consultoria'];
+const respostas = {};
+const contato = { nome: '', insta: '', obs: '' };
+let passo = 0;
+let resultadoAtual = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function perguntasAtivas() {
+  return PERGUNTAS.filter(p => !p.se || p.se(respostas));
+}
+
+function render() {
+  const lista = perguntasAtivas();
+  const p = lista[passo];
+  const total = respostas.perfil === undefined ? null : lista.length;
+  $('progressBar').style.width = (total ? (passo / total) * 100 : 0) + '%';
+  $('progressLabel').textContent = total ? `Pergunta ${passo + 1} de ${total}` : `Pergunta ${passo + 1}`;
+
+  let corpo;
+  if (p.tipo === 'contato') {
+    corpo = `
+      <div class="field"><label for="cNome">Nome</label>
+        <input type="text" id="cNome" value="${esc(contato.nome)}" placeholder="Seu nome"></div>
+      <div class="field"><label for="cInsta">@ do Instagram <span>(opcional)</span></label>
+        <input type="text" id="cInsta" value="${esc(contato.insta)}" placeholder="@seuperfil"></div>
+      <div class="field"><label for="cObs">Quer contar mais alguma coisa? <span>(opcional)</span></label>
+        <textarea id="cObs" placeholder="Ex.: nicho, cidade, o que já tentou">${esc(contato.obs)}</textarea></div>`;
+  } else {
+    const atual = respostas[p.id];
+    corpo = `<div class="options">${p.opcoes.map((o, i) => {
+      const marcado = p.multi ? (atual || []).includes(i) : atual === i;
+      return `<label class="option">
+        <input type="${p.multi ? 'checkbox' : 'radio'}" name="q" value="${i}" ${marcado ? 'checked' : ''}>
+        <span class="opt-text">${esc(o.v)}${o.hint ? `<small>${esc(o.hint)}</small>` : ''}</span>
+      </label>`;
+    }).join('')}</div>`;
+  }
+
+  const ultimo = passo === lista.length - 1;
+  $('quiz').innerHTML = `
+    <h2 class="q-title">${esc(p.titulo)}</h2>
+    ${p.hint ? `<p class="q-hint">${esc(p.hint)}</p>` : '<div class="q-space"></div>'}
+    ${corpo}
+    <div class="error" id="erro"></div>
+    <div class="nav">
+      <button class="btn link" id="voltar" ${passo === 0 ? 'hidden' : ''}>Voltar</button>
+      <span></span>
+      <button class="btn" id="avancar">${ultimo ? 'Ver meu resultado' : 'Continuar'}</button>
+    </div>`;
+
+  $('voltar').onclick = () => { salvar(false); passo--; render(); };
+  $('avancar').onclick = () => {
+    if (!salvar(true)) return;
+    if (ultimo) mostrarResultado();
+    else { passo++; render(); }
+  };
+
+  // Escolha única: avança sozinho depois do clique
+  if (!p.multi && p.tipo !== 'contato') {
+    document.querySelectorAll('input[name="q"]').forEach(el => {
+      el.addEventListener('change', () => {
+        if (!salvar(true)) return;
+        setTimeout(() => {
+          if (passo === perguntasAtivas().length - 1) mostrarResultado();
+          else { passo++; render(); }
+        }, 250);
+      });
+    });
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function salvar(validar) {
+  const p = perguntasAtivas()[passo];
+  if (p.tipo === 'contato') {
+    contato.nome = $('cNome').value.trim();
+    contato.insta = $('cInsta').value.trim();
+    contato.obs = $('cObs').value.trim();
+    if (validar && !contato.nome) { $('erro').textContent = 'Informe seu nome.'; return false; }
+    return true;
+  }
+  const marcados = [...document.querySelectorAll('input[name="q"]:checked')].map(el => Number(el.value));
+  if (validar && !marcados.length) { $('erro').textContent = 'Escolha uma opção para continuar.'; return false; }
+  if (marcados.length) respostas[p.id] = p.multi ? marcados : marcados[0];
+  // Apaga respostas de perguntas que deixaram de valer para este caminho
+  PERGUNTAS.forEach(q => { if (q.se && !q.se(respostas)) delete respostas[q.id]; });
+  return true;
+}
+
+function calcular() {
+  const pontos = { orientacao: 0, direcao: 0, mentoria: 0, consultoria: 0, nenhum: 0 };
+  perguntasAtivas().forEach(p => {
+    if (!p.opcoes || respostas[p.id] === undefined) return;
+    const r = respostas[p.id];
+    (Array.isArray(r) ? r : [r]).forEach(i => {
+      Object.entries(p.opcoes[i].pts || {}).forEach(([s, n]) => { pontos[s] += n; });
+    });
+  });
+  const ranking = Object.keys(pontos).sort((a, b) =>
+    pontos[b] - pontos[a] || ORDEM_DESEMPATE.indexOf(a) - ORDEM_DESEMPATE.indexOf(b));
+  return { ranking, pontos };
+}
+
+function mostrarResultado(escolhido) {
+  const { ranking, pontos } = calcular();
+  const indicado = ranking[0];
+  const chave = escolhido || indicado;
+  const alternativa = ranking.find(s => s !== indicado && s !== 'nenhum' && pontos[s] > 0);
+  resultadoAtual = chave;
+
+  $('progressBar').style.width = '100%';
+  $('progressLabel').textContent = 'Resultado';
+  $('quiz').style.display = 'none';
+
+  if (chave === 'nenhum') {
+    $('result').innerHTML = `
+      <h2 class="r-name">${esc(SEM_SERVICO.titulo)}</h2>
+      <div class="r-section">${SEM_SERVICO.texto.map(t => `<p>${esc(t)}</p>`).join('')}</div>
+      <div class="alt"><p><button id="refazer">Refazer o diagnóstico</button></p></div>`;
+    $('refazer').onclick = refazer;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  const s = SERVICOS[chave];
+
+  const outro = chave !== indicado;
+  $('result').innerHTML = `
+    <div class="r-kicker">${outro ? 'Você está vendo' : 'O serviço indicado para você é'}</div>
+    <h2 class="r-name">${esc(s.nome)}</h2>
+    <p class="r-lead">${esc(s.lead)}</p>
+
+    <div class="r-why">
+      <div class="label">Por que este serviço</div>
+      <p>${esc(s.porque)}</p>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><div class="k">Duração</div><div class="val">${esc(s.duracao)}</div></div>
+      <div class="fact"><div class="k">Investimento</div><div class="val">${esc(s.valor)}</div></div>
+      <div class="fact"><div class="k">Pagamento</div><div class="val">${esc(s.pagamento)}</div></div>
+    </div>
+
+    <div class="r-section">
+      <h3>Como funciona</h3>
+      ${s.comoFunciona.map(t => `<p>${esc(t)}</p>`).join('')}
+    </div>
+
+    <div class="r-section">
+      <h3>Etapas</h3>
+      <ol class="etapas">${s.etapas.map(e => `<li><div><strong>${esc(e.titulo)}</strong><span>${esc(e.desc)}</span></div></li>`).join('')}</ol>
+    </div>
+
+    <div class="r-section">
+      <h3>Para quem é</h3>
+      <ul class="para-quem">${s.paraQuem.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+    </div>
+
+    ${s.importante ? `<p class="importante">${esc(s.importante)}</p>` : ''}
+
+    <button class="btn cta" id="btnWa">Quero a ${esc(s.nome)}</button>
+
+    <div class="alt">
+      ${outro
+        ? `<p>Voltar para o serviço indicado: <button data-s="${indicado}">${esc(SERVICOS[indicado].nome)}</button></p>`
+        : alternativa ? `<p>Também pode fazer sentido para você: <button data-s="${alternativa}">${esc(SERVICOS[alternativa].nome)}</button></p>` : ''}
+      <p><button id="refazer">Refazer o diagnóstico</button></p>
+    </div>`;
+
+  $('btnWa').onclick = enviarWhatsApp;
+  $('refazer').onclick = refazer;
+  document.querySelectorAll('.alt button[data-s]').forEach(b => {
+    b.onclick = () => mostrarResultado(b.dataset.s);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function refazer() {
+  Object.keys(respostas).forEach(k => delete respostas[k]);
+  passo = 0;
+  $('result').innerHTML = '';
+  $('quiz').style.display = '';
+  render();
+}
+
+function enviarWhatsApp() {
+  const { ranking } = calcular();
+  const s = SERVICOS[resultadoAtual];
+  const linhas = [
+    `Olá! Fiz o diagnóstico e tenho interesse em: *${s.nome}*`,
+    resultadoAtual !== ranking[0] ? `(serviço indicado pelo diagnóstico: ${SERVICOS[ranking[0]].nome})` : null,
+    '',
+    `*Nome:* ${contato.nome}`,
+    contato.insta ? `*Instagram:* ${contato.insta}` : null,
+    '',
+    '*Minhas respostas:*'
+  ];
+  perguntasAtivas().forEach(p => {
+    if (!p.opcoes || respostas[p.id] === undefined) return;
+    const r = respostas[p.id];
+    const txt = (Array.isArray(r) ? r : [r]).map(i => p.opcoes[i].v).join('; ');
+    linhas.push(`• ${p.titulo} ${txt}`);
+  });
+  if (contato.obs) linhas.push('', `*Observações:* ${contato.obs}`);
+
+  const msg = encodeURIComponent(linhas.filter(l => l !== null).join('\n'));
+  window.open(`https://wa.me/${WHATSAPP_DESTINO}?text=${msg}`, '_blank');
+}
+
+render();
+</script>
+</body>
+</html>
