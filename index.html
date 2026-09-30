@@ -470,9 +470,9 @@ const PERGUNTAS = [
     id: 'desejo', se: r => r.perfil === 1,
     titulo: 'Qual frase mais combina com o que você procura?',
     opcoes: [
-      { v: 'Quero uma estratégia pronta e aprender a aplicar por conta própria', hint: 'Recebo o planejamento e sigo produzindo sozinha', pts: { consultoria: 4 } },
-      { v: 'Quero alguém ao meu lado enquanto desenvolvo minha comunicação', hint: 'Trago minhas demandas e pensamos juntas', pts: { mentoria: 4 } },
-      { v: 'Quero que alguém pense e organize o que eu vou produzir', hint: 'Eu fico só com a produção', pts: { direcao: 4 } }
+      { v: 'Quero uma estratégia pronta e aprender a aplicar por conta própria', hint: 'Recebo o planejamento e sigo produzindo sozinha', pts: { consultoria: 5 } },
+      { v: 'Quero alguém ao meu lado enquanto desenvolvo minha comunicação', hint: 'Trago minhas demandas e pensamos juntas', pts: { mentoria: 5 } },
+      { v: 'Quero que alguém pense e organize o que eu vou produzir', hint: 'Eu fico só com a produção', pts: { direcao: 5 } }
     ]
   },
   {
@@ -620,8 +620,14 @@ function calcular() {
       Object.entries(p.opcoes[i].pts || {}).forEach(([s, n]) => { pontos[s] += n; });
     });
   });
+  // Empate: vence o serviço que a pessoa pediu na pergunta "desejo"
+  const perguntaDesejo = PERGUNTAS.find(p => p.id === 'desejo');
+  const pedido = respostas.desejo !== undefined
+    ? Object.keys(perguntaDesejo.opcoes[respostas.desejo].pts)[0]
+    : null;
+  const desempate = s => (s === pedido ? -1 : ORDEM_DESEMPATE.indexOf(s));
   const ranking = Object.keys(pontos).sort((a, b) =>
-    pontos[b] - pontos[a] || ORDEM_DESEMPATE.indexOf(a) - ORDEM_DESEMPATE.indexOf(b));
+    pontos[b] - pontos[a] || desempate(a) - desempate(b));
   return { ranking, pontos };
 }
 
