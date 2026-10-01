@@ -199,6 +199,17 @@
     line-height: 1.3;
     color: var(--vinho);
   }
+  .r-why ul { list-style: none; }
+  .r-why li {
+    font-family: var(--f-destaque);
+    font-size: 24px;
+    line-height: 1.3;
+    color: var(--vinho);
+    position: relative;
+    padding-left: 18px;
+  }
+  .r-why li + li { margin-top: 6px; }
+  .r-why li::before { content: '•'; position: absolute; left: 0; }
 
   .facts {
     display: grid;
@@ -310,11 +321,12 @@ const SERVICOS = {
     lead: 'Para quem quer ter uma profissional responsável por pensar e direcionar estrategicamente os conteúdos de uma rede social, mas prefere continuar produzindo os próprios conteúdos.',
     porque: 'Você quer receber o direcionamento estratégico do que produzir e continuar responsável pela produção dos seus conteúdos.',
     duracao: 'Mensal, com contratação mínima de 3 meses',
-    valor: 'R$1.500/mês',
+    valor: 'R$1.700/mês',
     pagamento: 'Pix ou cartão',
     comoFunciona: [
       'Eu assumo a direção estratégica dos conteúdos de uma rede social: acompanho sua comunicação, analiso o que está sendo produzido e os resultados, penso nos próximos direcionamentos e separo as ideias de conteúdos que fazem sentido para você produzir.',
-      'Você fica responsável pela produção em si: escrita, gravação, design, edição e publicação. E, conforme você produz, reviso os conteúdos que você disponibilizar para garantir que estejam alinhados ao direcionamento que construímos.'
+      'Você fica responsável pela produção em si: escrita, gravação, design, edição e publicação.',
+      'E, conforme você produz, reviso os conteúdos que você disponibilizar para garantir que estejam alinhados ao direcionamento que construímos.'
     ],
     etapas: [
       { titulo: 'Análise e direcionamento', desc: 'Acompanho sua comunicação, seus objetivos, o momento do negócio e o que está acontecendo na rede social.' },
@@ -331,11 +343,12 @@ const SERVICOS = {
   },
 
   mentoria: {
-    nome: 'Mentoria de Comunicação',
+    nome: 'Acompanhamento de Comunicação',
+    artigo: 'o',
     lead: 'Para quem quer continuar desenvolvendo a própria comunicação com meu acompanhamento, trazendo as dificuldades e necessidades que aparecem enquanto coloca tudo em prática.',
     porque: 'Você quer aprender, aplicar e ter meu acompanhamento para evoluir sua comunicação ao longo dos meses.',
     duracao: 'Mensal, dentro de um acompanhamento de 3 meses',
-    valor: 'R$800/mês',
+    valor: 'R$1.200/mês',
     pagamento: 'Pix ou cartão',
     comoFunciona: [
       'Durante no mínimo 3 meses, acompanho sua comunicação e te ajudo a decidir os próximos passos conforme você vai produzindo e novas necessidades vão surgindo.',
@@ -382,7 +395,7 @@ const SERVICOS = {
     lead: 'Para social medias que já atendem clientes e querem ter meu olhar para as demandas de conteúdo e comunicação que aparecem no trabalho.',
     porque: 'Você é social media e busca ajuda para pensar estratégias, conteúdos e situações específicas dos seus clientes ou da sua própria comunicação.',
     duracao: 'Mensal',
-    valor: 'R$500/mês',
+    valor: 'R$790/mês',
     pagamento: 'Pix ou cartão',
     comoFunciona: [
       'Você tem 2 encontros por mês, de 1h a 1h30, e pode trazer o que estiver precisando naquele momento.',
@@ -401,27 +414,35 @@ const SERVICOS = {
   },
 
   analise: {
-    nome: 'Análise Pontual',
-    lead: 'Para quem quer meu olhar sobre a comunicação atual e direcionamentos sobre o que pode melhorar, sem entrar em um acompanhamento.',
-    porque: 'Você quer saber o que melhorar na sua comunicação e quais próximos passos fazem sentido, sem um acompanhamento mensal.',
-    duracao: 'Encontro único de até 1h20',
-    valor: 'R$300 a R$320',
+    nome: 'Análise de Conteúdo',
+    lead: 'Para quem quer entender o que pode melhorar na própria comunicação e receber direcionamentos sobre os próximos passos, sem precisar de um acompanhamento.',
+    porque: [
+      'Você quer entender o que pode melhorar na sua comunicação hoje',
+      'Tem dúvidas ou dificuldades específicas e quer meu olhar sobre elas',
+      'Quer saber quais próximos passos fazem sentido para você',
+      'Não precisa de uma estratégia completa ou de acompanhamento ao longo dos meses'
+    ],
+    duracao: '1 encontro de até 1h20',
+    valor: 'R$320',
     pagamento: 'Pix ou cartão',
     comoFunciona: [
-      'Antes do encontro, analiso sua comunicação e seu perfil atual.',
-      'Na reunião, de até 1h20, mostro o que pode melhorar, respondo suas dúvidas e passo os próximos passos. Depois, você recebe um resumo com os principais direcionamentos.'
+      'Antes do encontro, analiso sua comunicação atual para identificar os principais pontos que precisam da minha atenção.',
+      'Durante a reunião, passamos pela análise, conversamos sobre suas dúvidas e dificuldades e eu te direciono sobre o que pode ser ajustado e quais próximos passos fazem sentido para a sua comunicação.',
+      'Depois, você recebe um material resumindo os principais direcionamentos que passei durante o encontro para conseguir aplicar sozinha.',
+      'Esse é um serviço pontual, então não inclui acompanhamento ou suporte após a reunião.'
     ],
     etapas: [
-      { titulo: 'Análise', desc: 'Analiso sua comunicação e seu perfil como estão hoje.' },
-      { titulo: 'Reunião', desc: 'Até 1h20 para orientações, próximos passos e espaço para suas dúvidas.' },
-      { titulo: 'Resumo', desc: 'Você recebe por escrito os principais direcionamentos do encontro.' }
+      { titulo: 'Análise da comunicação', desc: 'Analiso sua comunicação atual e identifico os principais pontos que precisam ser trabalhados.' },
+      { titulo: 'Encontro de direcionamento', desc: 'Conversamos sobre o que identifiquei, suas dúvidas e dificuldades e os ajustes que podem ser feitos.' },
+      { titulo: 'Próximos passos', desc: 'Você recebe um resumo dos principais direcionamentos e próximos passos para aplicar por conta própria.' }
     ],
     paraQuem: [
-      'Quem quer uma avaliação da comunicação atual e saber o que melhorar',
-      'Quem não precisa ou não consegue investir agora em um acompanhamento',
-      'Quem prefere aplicar sozinha depois de receber os direcionamentos'
-    ],
-    importante: 'Importante: a Análise Pontual não inclui suporte depois do encontro nem acompanhamento mensal. Diferente da Consultoria, não envolve um planejamento estratégico personalizado: eu analiso o que já existe e indico melhorias.'
+      'Quem quer um olhar profissional sobre a comunicação que já tem hoje',
+      'Quem tem dúvidas ou dificuldades específicas e quer saber como resolvê-las',
+      'Quem quer entender o que priorizar antes de fazer mudanças',
+      'Quem busca um direcionamento pontual, sem precisar de acompanhamento',
+      'Quem ainda não precisa de uma estratégia completa como a Consultoria'
+    ]
   }
 };
 
@@ -689,7 +710,7 @@ function mostrarResultado(escolhido) {
 
     <div class="r-why">
       <div class="label">Por que este serviço</div>
-      <p>${esc(s.porque)}</p>
+      ${Array.isArray(s.porque) ? `<ul>${s.porque.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : `<p>${esc(s.porque)}</p>`}
     </div>
 
     <div class="facts">
@@ -715,7 +736,7 @@ function mostrarResultado(escolhido) {
 
     ${s.importante ? `<p class="importante">${esc(s.importante)}</p>` : ''}
 
-    <button class="btn cta" id="btnWa">Quero a ${esc(s.nome)}</button>
+    <button class="btn cta" id="btnWa">Quero ${s.artigo || 'a'} ${esc(s.nome)}</button>
 
     <div class="alt">
       ${outro
