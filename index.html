@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Instrument+Serif&family=Raleway:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://use.typekit.net/prh2aaz.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,11 +19,11 @@
     --linha: #e4e4e4;
 
     /* Semelhantes disponíveis no Google Fonts:
-       Instrument Serif no lugar de Times New Roman MT Condensed,
-       Caveat no lugar de Handsome */
+       Instrument Serif no lugar de Times New Roman MT Condensed.
+       Handsome Pro vem do Adobe Fonts (kit prh2aaz); Caveat fica de reserva. */
     --f-titulo: 'Instrument Serif', 'Times New Roman', Times, serif;
     --f-texto: 'Raleway', 'Helvetica Neue', Arial, sans-serif;
-    --f-destaque: 'Caveat', cursive;
+    --f-destaque: 'handsome-pro', 'Caveat', cursive;
   }
 
   html { scroll-behavior: smooth; }
@@ -307,7 +308,7 @@ const SERVICOS = {
   direcao: {
     nome: 'Direção de Conteúdo',
     lead: 'Para quem quer ter uma profissional responsável por pensar e direcionar estrategicamente os conteúdos de uma rede social, mas prefere continuar produzindo os próprios conteúdos.',
-    porque: 'Você quer tirar das suas mãos a responsabilidade de decidir constantemente o que produzir, sem terceirizar sua produção.',
+    porque: 'Você quer receber o direcionamento estratégico do que produzir e continuar responsável pela produção dos seus conteúdos.',
     duracao: 'Mensal, com contratação mínima de 3 meses',
     valor: 'R$1.500/mês',
     pagamento: 'Pix ou cartão',
@@ -323,7 +324,7 @@ const SERVICOS = {
     ],
     paraQuem: [
       'Quem quer ter alguém pensando estrategicamente seus conteúdos de forma contínua',
-      'Quem não quer mais decidir sozinha o que produzir a cada semana ou mês',
+      'Quem prefere receber o direcionamento do que produzir a cada semana ou mês, em vez de decidir sozinha',
       'Quem consegue produzir os próprios conteúdos, mas quer ter uma direção por trás deles',
       'Quem quer um acompanhamento mais próximo da comunicação sem contratar uma gestão completa com copy, design e edição'
     ]
@@ -397,6 +398,30 @@ const SERVICOS = {
       'Quem quer orientação sobre conteúdo e comunicação sem entrar em uma formação ou mentoria com processo fixo'
     ],
     importante: 'Importante: a Orientação é voltada para conteúdo e comunicação. Questões de vendas, gestão, processos e organização do negócio não fazem parte desse serviço.'
+  },
+
+  analise: {
+    nome: 'Análise Pontual',
+    lead: 'Para quem quer meu olhar sobre a comunicação atual e direcionamentos sobre o que pode melhorar, sem entrar em um acompanhamento.',
+    porque: 'Você quer saber o que melhorar na sua comunicação e quais próximos passos fazem sentido, sem um acompanhamento mensal.',
+    duracao: 'Encontro único de até 1h20',
+    valor: 'R$300 a R$320',
+    pagamento: 'Pix ou cartão',
+    comoFunciona: [
+      'Antes do encontro, analiso sua comunicação e seu perfil atual.',
+      'Na reunião, de até 1h20, mostro o que pode melhorar, respondo suas dúvidas e passo os próximos passos. Depois, você recebe um resumo com os principais direcionamentos.'
+    ],
+    etapas: [
+      { titulo: 'Análise', desc: 'Analiso sua comunicação e seu perfil como estão hoje.' },
+      { titulo: 'Reunião', desc: 'Até 1h20 para orientações, próximos passos e espaço para suas dúvidas.' },
+      { titulo: 'Resumo', desc: 'Você recebe por escrito os principais direcionamentos do encontro.' }
+    ],
+    paraQuem: [
+      'Quem quer uma avaliação da comunicação atual e saber o que melhorar',
+      'Quem não precisa ou não consegue investir agora em um acompanhamento',
+      'Quem prefere aplicar sozinha depois de receber os direcionamentos'
+    ],
+    importante: 'Importante: a Análise Pontual não inclui suporte depois do encontro nem acompanhamento mensal. Diferente da Consultoria, não envolve um planejamento estratégico personalizado: eu analiso o que já existe e indico melhorias.'
   }
 };
 
@@ -422,7 +447,7 @@ const PERGUNTAS = [
     id: 'perfil',
     titulo: 'Qual frase descreve você?',
     opcoes: [
-      { v: 'Sou social media', pts: {} },
+      { v: 'Sou social media e preciso de ajuda', pts: {} },
       { v: 'Tenho uma marca pessoal ou um negócio e quero cuidar da minha comunicação', pts: {} }
     ]
   },
@@ -460,19 +485,20 @@ const PERGUNTAS = [
 
   // ---- Marca ----
   {
-    id: 'rede', se: r => r.perfil === 1,
-    titulo: 'Em qual rede social está o seu foco hoje?',
+    id: 'rede', se: r => r.perfil === 1, multi: true,
+    titulo: 'Em quais redes sociais está o seu foco hoje?',
+    hint: 'Pode marcar mais de uma.',
     opcoes: [
       { v: 'Instagram' }, { v: 'TikTok' }, { v: 'LinkedIn' }, { v: 'YouTube' }, { v: 'Outra' }
     ]
   },
   {
     id: 'desejo', se: r => r.perfil === 1,
-    titulo: 'Qual frase mais combina com o que você procura?',
+    titulo: 'O que você procura?',
     opcoes: [
-      { v: 'Quero uma estratégia pronta e aprender a aplicar por conta própria', hint: 'Recebo o planejamento e sigo produzindo sozinha', pts: { consultoria: 5 } },
-      { v: 'Quero alguém ao meu lado enquanto desenvolvo minha comunicação', hint: 'Trago minhas demandas e pensamos juntas', pts: { mentoria: 5 } },
-      { v: 'Quero que alguém pense e organize o que eu vou produzir', hint: 'Eu fico só com a produção', pts: { direcao: 5 } }
+      { v: 'Quero uma estratégia descomplicada para aplicar por conta própria', hint: 'Quero entender o que faz sentido fazer e depois conseguir seguir sozinha.', pts: { consultoria: 5 } },
+      { v: 'Quero entender minha própria comunicação para saber como conduzi-la conforme meu negócio evolui', hint: 'Quero ter acompanhamento enquanto aprendo, aplico e desenvolvo isso ao longo dos meses.', pts: { mentoria: 5 } },
+      { v: 'Quero que alguém pense e organize o que eu vou produzir', hint: 'Eu fico responsável pela produção.', pts: { direcao: 5 } }
     ]
   },
   {
@@ -481,13 +507,14 @@ const PERGUNTAS = [
     opcoes: [
       { v: 'Quero aprender a decidir sozinha', pts: { consultoria: 2, mentoria: 1 } },
       { v: 'Quero decidir junto com alguém', pts: { mentoria: 2 } },
-      { v: 'Não quero mais ter essa responsabilidade', pts: { direcao: 3 } }
+      { v: 'Quero receber esse direcionamento e ficar responsável pela produção', pts: { direcao: 3 } }
     ]
   },
   {
     id: 'periodo', se: r => r.perfil === 1,
     titulo: 'Por quanto tempo você quer ter acompanhamento?',
     opcoes: [
+      { v: 'Quero apenas uma orientação pontual', hint: 'Para entender o que posso melhorar e quais próximos passos fazem sentido.', pts: { analise: 100 } },
       { v: 'Cerca de 30 dias', hint: 'Para organizar e depois seguir sozinha', pts: { consultoria: 3 } },
       { v: 'Alguns meses', hint: 'Enquanto desenvolvo minha comunicação', pts: { mentoria: 2, direcao: 1 } },
       { v: 'De forma contínua', hint: 'Todos os meses, sem prazo para terminar', pts: { direcao: 2, mentoria: 1 } }
@@ -520,7 +547,7 @@ const PERGUNTAS = [
 
 /* ===================================================================== */
 
-const ORDEM_DESEMPATE = ['nenhum', 'orientacao', 'direcao', 'mentoria', 'consultoria'];
+const ORDEM_DESEMPATE = ['nenhum', 'orientacao', 'analise', 'direcao', 'mentoria', 'consultoria'];
 const respostas = {};
 const contato = { nome: '', insta: '', obs: '' };
 let passo = 0;
@@ -612,7 +639,7 @@ function salvar(validar) {
 }
 
 function calcular() {
-  const pontos = { orientacao: 0, direcao: 0, mentoria: 0, consultoria: 0, nenhum: 0 };
+  const pontos = { orientacao: 0, analise: 0, direcao: 0, mentoria: 0, consultoria: 0, nenhum: 0 };
   perguntasAtivas().forEach(p => {
     if (!p.opcoes || respostas[p.id] === undefined) return;
     const r = respostas[p.id];
